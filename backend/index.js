@@ -8,9 +8,6 @@ const mockNotification = JSON.stringify({
 });
 
 let queue = [
-  { uid: 1234, name: "Sam", ws: null },
-  { uid: 420, name: "Bob", ws: null },
-  { uid: 69, name: "Jane", ws: null }
 ];
 
 const WEBSOCKET_PING_TIME = 40000;
