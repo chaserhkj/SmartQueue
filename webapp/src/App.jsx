@@ -111,14 +111,15 @@ function App() {
   }, [user, wsConnected]);
 
   useEffect(() => {
-    if (!Cookies.get("user")) {
+    document.title = "ECE 468/573 Office Hours Queue";
+    if (!Cookies.get("ece_468_queue_user")) {
       Cookies.set(
-        "user",
+        "ece_468_queue_user",
         { uid: genRandID(), name: DEFAULT_USER.name },
         { expires: 7 }
       );
     }
-    setUser(JSON.parse(Cookies.get("user")));
+    setUser(JSON.parse(Cookies.get("ece_468_queue_user")));
     attachWSHandlers(ws);
     Notification.requestPermission().then(function(result) {
       console.log("Notif request perm: " + result);
@@ -136,7 +137,7 @@ function App() {
 
   const updateUser = newUser => {
     console.log("NEW USER: ", newUser);
-    Cookies.set("user", newUser, { expires: 7 });
+    Cookies.set("ece_468_queue_user", newUser, { expires: 7 });
     setUser(newUser);
   };
 
@@ -145,7 +146,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/ta">
-            <TAView user={user} users={users} ws={ws} />
+            <TAView user={user} users={users} userUpdateFunction={updateUser} ws={ws} />
           </Route>
           <Route path="/">
             <StudentView

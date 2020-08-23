@@ -21,7 +21,9 @@ const StudentView = props => {
 
   return (
     <Container maxWidth="sm">
-      <h1>2200 Office Hours Queue</h1>
+      <title>ECE 468/573 Office Hours Queue</title>
+      <h1>ECE 468/573 Office Hours Queue</h1>
+      <h3>Your Display Name:</h3>
       {user && (
         <UserInfo
           user={user}

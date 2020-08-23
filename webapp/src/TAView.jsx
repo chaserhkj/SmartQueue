@@ -3,7 +3,10 @@ import { Container, TextField } from "@material-ui/core";
 import Cookies from "js-cookie";
 
 import StudentList from "./StudentList";
+import UserInfo from "./UserInfo";
 import FieldEditor from "./FieldEditor";
+
+const DEFAULT_USER = { uid: -1, name: "No Name Provided" };
 
 const TAView = props => {
   const [meetingLink, setMeetingLink] = useState(null);
@@ -29,22 +32,31 @@ const TAView = props => {
   };
 
   useEffect(() => {
-    if (!Cookies.get("ta")) {
+    if (!Cookies.get("ece_468_queue_ta")) {
       console.log("no c");
-      Cookies.set("ta", { meetingLink: null });
+      Cookies.set("ece_468_queue_ta", { meetingLink: null });
     } else {
-      const ta = JSON.parse(Cookies.get("ta"));
+      const ta = JSON.parse(Cookies.get("ece_468_queue_ta"));
       setMeetingLink(ta.meetingLink);
     }
   }, []);
 
   useEffect(() => {
-    Cookies.set("ta", { meetingLink: meetingLink }, { expires: 7 });
+    Cookies.set("ece_468_queue_ta", { meetingLink: meetingLink }, { expires: 7 });
   }, [meetingLink]);
 
   return (
     <Container maxWidth="sm">
-      <h1>2200 TA</h1>
+      <h1>ECE 468/573 TA</h1>
+      <h3>TA Display Name:</h3>
+      {props.user && (
+        <UserInfo
+          user={props.user}
+          defaultUser={DEFAULT_USER}
+          updateFunction={props.userUpdateFunction}
+        />
+      )}
+      <h3>Meeting Link:</h3>
       <FieldEditor
         value={meetingLink}
         label="Meeting link"
