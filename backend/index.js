@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
 
-const wss = new WebSocket.Server({ port: 8888 });
+const wss = new WebSocket.Server({ host: "127.0.0.1", port: 8888 });
 
 const mockNotification = JSON.stringify({
   type: "notification",
