@@ -60,6 +60,17 @@ wss.on("connection", ws => {
     });
   };
 
+  const notifyAll = (sender, notifContent) => {
+    const uid = sender.uid;
+    let announcementMsg = { type: "Announcement", notifContent: notifContent };
+    announcementMsg = JSON.stringify(announcementMsg)
+    queue.forEach(item => {
+      if (item.uid != uid) {
+        item.ws.send(announcementMsg);
+      }
+    })
+  }
+
   ws.on("close", event => {
     console.log(`Closed Connection - ${ws.id} (${wss.clients.size} total connections)`);
   });
@@ -95,6 +106,11 @@ wss.on("connection", ws => {
         const { notifContent } = msg;
         console.log(`* ${user.name}(${user.uid})`);
         notifyUser(user, notifContent);
+      } else if (msg.action == "sendannouncement") {
+        const sender = msg.value;
+        const { notifContent } = msg;
+        console.log(`* Announcement from ${sender.name}(${sender.id}): ${notifContent.body}`);
+        notifyAll(sender, notifContent);
       }
     } else if (msg.type == "pingres") {
       console.log(`   Ping res:  ${msg.id}`);
