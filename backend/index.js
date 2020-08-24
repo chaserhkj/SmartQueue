@@ -60,13 +60,12 @@ wss.on("connection", ws => {
     });
   };
 
-  const notifyAll = (sender, notifContent) => {
-    const uid = sender.uid;
+  const notifyAll = (notifContent) => {
     let announcementMsg = { type: "announcement", notifContent: notifContent };
     announcementMsg = JSON.stringify(announcementMsg)
-    queue.forEach(item => {
-      if (item.uid != uid) {
-        item.ws.send(announcementMsg);
+    wss.clients.forEach(client => {
+      if (client.id != ws.id) {
+        client.send(announcementMsg);
       }
     })
   }
@@ -110,7 +109,7 @@ wss.on("connection", ws => {
         const sender = msg.value;
         const { notifContent } = msg;
         console.log(`* Announcement from ${sender.name}(${sender.id}): ${notifContent.body}`);
-        notifyAll(sender, notifContent);
+        notifyAll(notifContent);
       }
     } else if (msg.type == "pingres") {
       console.log(`   Ping res:  ${msg.id}`);
