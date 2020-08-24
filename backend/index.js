@@ -62,7 +62,7 @@ wss.on("connection", ws => {
 
   const notifyAll = (sender, notifContent) => {
     const uid = sender.uid;
-    let announcementMsg = { type: "Announcement", notifContent: notifContent };
+    let announcementMsg = { type: "announcement", notifContent: notifContent };
     announcementMsg = JSON.stringify(announcementMsg)
     queue.forEach(item => {
       if (item.uid != uid) {
