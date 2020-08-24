@@ -193,7 +193,7 @@ function App() {
         <p>Powered by <a href="https://tlk.io/">tlk.io</a></p>
         <Box p={1}>
         <div id="tlkio" data-channel="purdue-ece-468" data-theme="theme--day" style={{ width: "100%" , height:800 }}></div>
-        <ScriptTag async src="http://tlk.io/embed.js" type="text/javascript"></ScriptTag>
+        <ScriptTag async src="https://tlk.io/embed.js" type="text/javascript"></ScriptTag>
         </Box>
       </Container>
     </div>
