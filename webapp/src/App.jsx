@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import ScriptTag from "react-script-tag";
+import { Button, Box, Container} from "@material-ui/core";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,7 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import TAView from "./TAView";
 import StudentView from "./StudentView";
 
-let ws = new WebSocket("ws://localhost:8888/");
+const WS_URL="wss://cap.ecn.purdue.edu/ECE468Queue";
+let ws = new WebSocket(WS_URL);
 const WS_RETRY_TIME = 5000;
 
 toast.configure({ draggable: false, autoClose: 8000 });
@@ -27,7 +30,7 @@ function App() {
     setTimeout(() => {
       console.log("WS - attempt reconnect");
       if (ws.readyState === WebSocket.CLOSED) {
-        ws = new WebSocket("ws://localhost:8888/");
+        ws = new WebSocket(WS_URL);
         if (ws.readyState !== WebSocket.OPEN) {
           console.log("WS - failed reconnect");
           wsReconnect();
@@ -81,11 +84,38 @@ function App() {
         let n = new Notification(notifContent.title, {
           body: notifContent.body || ""
         });
-        n.onclick = () => {
+        n.onClick = () => {
+          window.focus();
+        };
+        let openLink = () => {
           console.log("Notif click, goto: " + notifContent.link);
           window.open(notifContent.link, "_blank");
         };
-        toast.success(notifContent.title);
+        toast.info( ({closeToast}) => 
+          <Box>
+            <Box p={1}>{notifContent.title}</Box>
+            <Box p={1}><Button onClick={()=>{openLink();closeToast();}} color="primary" variant="contained">Open Meeting Link</Button></Box>
+          </Box>
+        , {autoClose: 60000, closeOnClick:false, closeButton:false, draggable: false, pauseOnFocusLoss:false, pauseOnHover:false});
+      } else if (msg.type === "announcement") {
+        let notifContent = msg.notifContent;
+        if (!notifContent) {
+          console.log("Missing notifcontent");
+          return;
+        }
+        let n = new Notification(notifContent.title, {
+          body: notifContent.body || ""
+        });
+        n.onClick = () => {
+          window.focus();
+        };
+        toast.info( ({closeToast}) => 
+          <Box>
+            <Box p={1}><b>{notifContent.title}</b></Box>
+            <Box p={1}>{notifContent.body}</Box>
+          </Box>
+        , {autoClose: false});
+
       } else if (msg.type === "ping") {
         let pingMsgResp = JSON.stringify({
           type: "pingres",
@@ -158,6 +188,14 @@ function App() {
           </Route>
         </Switch>
       </Router>
+      <Container maxWidth="sm">
+        <h3>Public Chat Room for Quick Communications: </h3>
+        <p>Powered by <a href="https://tlk.io/">tlk.io</a></p>
+        <Box p={1}>
+        <div id="tlkio" data-channel="purdue-ece-468" data-theme="theme--day" style={{ width: "100%" , height:800 }}></div>
+        <ScriptTag async src="http://tlk.io/embed.js" type="text/javascript"></ScriptTag>
+        </Box>
+      </Container>
     </div>
   );
 }

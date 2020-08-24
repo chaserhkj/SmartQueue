@@ -2,6 +2,7 @@
   "name": "2200-queue",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
@@ -12,6 +13,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
+    "react-script-tag": "^1.1.2",
     "react-scripts": "3.4.1",
     "react-toastify": "^5.5.0",
     "ws": "^7.2.3"
