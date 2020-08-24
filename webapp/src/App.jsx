@@ -21,6 +21,7 @@ function App() {
   const [user, setUser] = useState();
   const [users, setUsers] = useState([]);
   const [wsConnected, setWsConnected] = useState(false);
+  const [notifEnabled, setNotifEnabled] = useState(false);
 
   const genRandID = () => {
     return Math.floor(Math.random() * 1000);
@@ -81,12 +82,14 @@ function App() {
           console.log("Missing notifcontent");
           return;
         }
-        let n = new Notification(notifContent.title, {
-          body: notifContent.body || ""
-        });
-        n.onClick = () => {
-          window.focus();
-        };
+        if (notifEnabled) {
+          let n = new Notification(notifContent.title, {
+            body: notifContent.body || ""
+          });
+          n.onClick = () => {
+            window.focus();
+          };
+        }
         let openLink = () => {
           console.log("Notif click, goto: " + notifContent.link);
           window.open(notifContent.link, "_blank");
@@ -103,12 +106,14 @@ function App() {
           console.log("Missing notifcontent");
           return;
         }
-        let n = new Notification(notifContent.title, {
-          body: notifContent.body || ""
-        });
-        n.onClick = () => {
-          window.focus();
-        };
+        if (notifEnabled) {
+          let n = new Notification(notifContent.title, {
+            body: notifContent.body || ""
+          });
+          n.onClick = () => {
+            window.focus();
+          };
+        }
         toast.info( ({closeToast}) => 
           <Box>
             <Box p={1}><b>{notifContent.title}</b></Box>
@@ -151,12 +156,16 @@ function App() {
     }
     setUser(JSON.parse(Cookies.get("ece_468_queue_user")));
     attachWSHandlers(ws);
-    Notification.requestPermission().then(function(result) {
-      console.log("Notif request perm: " + result);
-      if (result !== "granted") {
-        toast.error("Please allow notifications and refresh the page!");
-      }
-    });
+    if ('Notification' in window) {
+      Promise.resolve(Notification.requestPermission()).then(function(result) {
+        console.log("Notif request perm: " + result);
+        if (result !== "granted") {
+          toast.error("Please allow notifications and refresh the page!");
+        } else {
+          setNotifEnabled(true);
+        }
+      });
+    }
   }, []);
 
   /* TODO Notifications:
