@@ -22,6 +22,7 @@ function App() {
   const [users, setUsers] = useState([]);
   const [wsConnected, setWsConnected] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(false);
+  const [ta_s, setTAs] = useState([]);
 
   const genRandID = () => {
     return Math.floor(Math.random() * 1000);
@@ -74,6 +75,14 @@ function App() {
         } else {
           const newUsers = msg.value;
           setUsers(newUsers);
+        }
+      } else if (msg.type === "talist"){
+        if (!Array.isArray(msg.value)) {
+          console.log("WS ERROR: talist not array");
+          setTAs([]);
+        } else {
+          const newTAs = msg.value;
+          setTAs(newTAs);
         }
       } else if (msg.type === "notification") {
         // Check to make sure msg is correct
@@ -191,6 +200,7 @@ function App() {
             <StudentView
               user={user}
               users={users}
+              ta_s={ta_s}
               userUpdateFunction={updateUser}
               wsSend={wsSend}
             />

@@ -10,6 +10,8 @@ const mockNotification = JSON.stringify({
 let queue = [
 ];
 
+let ta_s = new Object();
+
 const WEBSOCKET_PING_TIME = 40000;
 // const WEBSOCKET_PING_TIME = 5000;
 
@@ -48,6 +50,14 @@ wss.on("connection", ws => {
     client.send(JSON.stringify({ type: "queue", value: queueCopy }));
   };
 
+  const sendTAs = client => {
+    let taList = [];
+    Object.values(ta_s).forEach( val => {
+      taList.push({ uid: val.uid, name: val.name});
+    });
+    client.send(JSON.stringify({ type: "talist", value: taList}));
+  }
+
   const notifyUser = (user, notifContent) => {
     const uid = user.uid;
     let notificationMsg = { type: "notification", notifContent: notifContent };
@@ -71,6 +81,12 @@ wss.on("connection", ws => {
   }
 
   ws.on("close", event => {
+    Object.keys(ta_s).forEach(key => {
+      if (ws.id == key) {
+        delete ta_s[key];
+      }
+    });
+    wss.clients.forEach(sendTAs);
     console.log(`Closed Connection - ${ws.id} (${wss.clients.size} total connections)`);
   });
 
@@ -110,6 +126,10 @@ wss.on("connection", ws => {
         const { notifContent } = msg;
         console.log(`* Announcement from ${sender.name}(${sender.id}): ${notifContent.body}`);
         notifyAll(notifContent);
+      } else if (msg.action == "addta") {
+        const user = msg.value;
+        ta_s[ws.id] = user;
+        wss.clients.forEach(sendTAs);
       }
     } else if (msg.type == "pingres") {
       console.log(`   Ping res:  ${msg.id}`);

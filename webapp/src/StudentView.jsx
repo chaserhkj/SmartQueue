@@ -3,12 +3,13 @@ import { Box, Button, Container } from "@material-ui/core";
 import { Add, Remove } from "@material-ui/icons";
 
 import StudentList from "./StudentList";
+import TAList from "./TAList";
 import UserInfo from "./UserInfo";
 
 const DEFAULT_USER = { uid: -1, name: "No Name Provided" };
 
 const StudentView = props => {
-  const {user, users} = props;
+  const {user, users, ta_s} = props;
 
   const handleJoinQueue = () => {
     const msg = { type: "action", action: "add", value: user };
@@ -38,6 +39,8 @@ const StudentView = props => {
           updateFunction={props.userUpdateFunction}
         />
       )}
+      <h3>Current online TAs:</h3>
+      <TAList ta_s={ta_s} />
       <h3>Queue</h3>
       <StudentList users={users} />
       <Box display="flex" flexDirection="row" justifyContent="center">

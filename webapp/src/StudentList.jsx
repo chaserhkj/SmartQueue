@@ -32,7 +32,7 @@ const StudentList = props => {
               <ListItemText
                 primary={
                   // i + 1 + ". " + u.charAt(0).toUpperCase() + u.substring(1)
-                  i + 1 + ". " + u.name + " (" + u.uid + ")"
+                  i + 1 + ". " + u.name + " (uid: " + u.uid + ")"
                 }
               />
               {props.admin && (

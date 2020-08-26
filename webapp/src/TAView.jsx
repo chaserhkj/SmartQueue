@@ -34,6 +34,16 @@ const TAView = props => {
     props.ws.send(JSON.stringify(msg));
   };
 
+  const updateTaName = user => {
+    props.userUpdateFunction(user);
+    const msg = {
+      type: "action",
+      action: "addta",
+      value: user
+    }
+    props.ws.send(JSON.stringify(msg));
+  };
+
   useEffect(() => {
     if (!Cookies.get("ece_468_queue_ta")) {
       console.log("no c");
@@ -42,6 +52,13 @@ const TAView = props => {
       const ta = JSON.parse(Cookies.get("ece_468_queue_ta"));
       setMeetingLink(ta.meetingLink);
     }
+
+    const msg = {
+      type: "action",
+      action: "addta",
+      value: props.user
+    }
+    props.ws.send(JSON.stringify(msg));
   }, []);
 
   useEffect(() => {
@@ -81,7 +98,7 @@ const TAView = props => {
         <UserInfo
           user={props.user}
           defaultUser={DEFAULT_USER}
-          updateFunction={props.userUpdateFunction}
+          updateFunction={updateTaName}
         />
       )}
       <h3>Meeting Link (Please use full link):</h3>
