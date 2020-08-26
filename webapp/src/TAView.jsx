@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, TextField, Button } from "@material-ui/core";
+import { Box, Container, TextField, Button, Switch } from "@material-ui/core";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
@@ -12,6 +12,7 @@ const DEFAULT_USER = { uid: -1, name: "No Name Provided" };
 const TAView = props => {
   const [meetingLink, setMeetingLink] = useState(null);
   const [announcement, setAnnouncement] = useState("");
+  const [available, setAvailable] = useState(false);
 
   const notifyFunction = user => {
     const notifContent = {
@@ -36,12 +37,33 @@ const TAView = props => {
 
   const updateTaName = user => {
     props.userUpdateFunction(user);
-    const msg = {
-      type: "action",
-      action: "addta",
-      value: user
+    if (available) {
+      const msg = {
+        type: "action",
+        action: "addta",
+        value: user
+      }
+      props.ws.send(JSON.stringify(msg));
     }
-    props.ws.send(JSON.stringify(msg));
+  };
+
+  const toggleAvailable = () => {
+    if (!available) {
+      const msg = {
+        type: "action",
+        action: "addta",
+        value: props.user
+      }
+      props.ws.send(JSON.stringify(msg));
+    } else {
+      const msg = {
+        type: "action",
+        action: "removeta",
+        value: props.user
+      }
+      props.ws.send(JSON.stringify(msg));
+    }
+    setAvailable((prev) => !prev);
   };
 
   useEffect(() => {
@@ -52,13 +74,6 @@ const TAView = props => {
       const ta = JSON.parse(Cookies.get("ece_468_queue_ta"));
       setMeetingLink(ta.meetingLink);
     }
-
-    const msg = {
-      type: "action",
-      action: "addta",
-      value: props.user
-    }
-    props.ws.send(JSON.stringify(msg));
   }, []);
 
   useEffect(() => {
@@ -101,6 +116,7 @@ const TAView = props => {
           updateFunction={updateTaName}
         />
       )}
+      <Box> <Switch checked={available} onChange={toggleAvailable} /> Display myself as available to students </Box>
       <h3>Meeting Link (Please use full link):</h3>
       <FieldEditor
         value={meetingLink}

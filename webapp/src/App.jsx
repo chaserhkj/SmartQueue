@@ -10,6 +10,7 @@ import TAView from "./TAView";
 import StudentView from "./StudentView";
 
 const WS_URL="wss://cap.ecn.purdue.edu/ECE468Queue";
+//const WS_URL="ws://127.0.0.1:8888"; // Debugging
 let ws = new WebSocket(WS_URL);
 const WS_RETRY_TIME = 5000;
 
@@ -45,6 +46,7 @@ function App() {
         // Set manually here because handlers weren't connected in time to catch open
         setWsConnected(true);
         ws.send(JSON.stringify({ type: "request", value: "queue" }));
+        ws.send(JSON.stringify({ type: "request", value: "talist" }));
       }
     }, WS_RETRY_TIME);
   };

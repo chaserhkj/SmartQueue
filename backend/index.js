@@ -130,12 +130,22 @@ wss.on("connection", ws => {
         const user = msg.value;
         ta_s[ws.id] = user;
         wss.clients.forEach(sendTAs);
+      } else if (msg.action == "removeta") {
+        const user = msg.value;
+        Object.keys(ta_s).forEach(key => {
+          if (ta_s[key].uid == user.uid) {
+            delete ta_s[key];
+          }
+        });
+        wss.clients.forEach(sendTAs);
       }
     } else if (msg.type == "pingres") {
       console.log(`   Ping res:  ${msg.id}`);
     } else if (msg.type === "request") {
       if (msg.value === "queue") {
         sendQueue(ws);
+      } else if (msg.value === "talist") {
+        sendTAs(ws);
       }
     } else if (msg.type === "updateid") {
       // debug variable/console output
@@ -153,5 +163,6 @@ wss.on("connection", ws => {
   });
   // Send queue
   sendQueue(ws);
+  sendTAs(ws);
   clientKeepAlive(ws);
 });

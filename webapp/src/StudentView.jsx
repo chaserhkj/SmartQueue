@@ -39,7 +39,7 @@ const StudentView = props => {
           updateFunction={props.userUpdateFunction}
         />
       )}
-      <h3>Current online TAs:</h3>
+      <h3>Currently available TAs:</h3>
       <TAList ta_s={ta_s} />
       <h3>Queue</h3>
       <StudentList users={users} />
